@@ -3,7 +3,7 @@ pipeline {
 
   //Configure the following environment variables before executing the Jenkins Job
   environment {
-    IntegrationFlowID = "IntegrationFlow1"
+    IntegrationFlowID = "rb_ci_it_test"
 	  CPIHost = "${env.CPI_HOST}"
 	  CPIOAuthHost = "${env.CPI_OAUTH_HOST}"
 	  CPIOAuthCredentials = "${env.CPI_OAUTH_CRED}"	
@@ -16,7 +16,7 @@ pipeline {
           //get oauth token for Cloud Integration
           println("requesting oauth token");
 		      try{
-            def getTokenResp = httpRequest acceptType: 'APPLICATION_JSON',
+            def getTokenResp = httpRequest httpProxy: 'http://rb-proxy-sl.rbesz01.com:8080',acceptType: 'APPLICATION_JSON',
               authentication: env.CPIOAuthCredentials,
               contentType: 'APPLICATION_JSON',
               httpMode: 'POST',
@@ -40,7 +40,7 @@ pipeline {
           //undeploy integration flow as specified in the configuration
           println("Undeploying integration flow.");
 		      try{
-			      def undeployResp = httpRequest httpMode: 'DELETE',
+			      def undeployResp = httpRequest httpProxy: 'http://rb-proxy-sl.rbesz01.com:8080',httpMode: 'DELETE',
               customHeaders: [
                 [maskValue: false, name: 'Authorization', value: env.token]
               ],
